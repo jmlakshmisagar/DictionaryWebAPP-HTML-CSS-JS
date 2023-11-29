@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/seshat-regular" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@100&family=Arvo&family=Bebas+Neue&family=Caveat&family=Comfortaa:wght@300&family=Exo+2:ital,wght@1,100&family=Exo:wght@100&family=IBM+Plex+Mono:wght@100&family=Inconsolata:wght@300&family=Kanit&family=Open+Sans:wght@500&family=Sometype+Mono:wght@500&family=Space+Grotesk:wght@300&family=Urbanist:wght@100&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="pngegg.png">
+    <style>
+        body {
+            width: 95vw;
+            height: 95vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #d2ebcd;
+            font-family: 'SeshatRegular';
+            font-weight: normal;
+            font-style: normal;
+            color: #000;
+        }
+
+        .page {
+            width: auto;
+            background-color: #39393955;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 15px 20px 20px 20px;
+
+        }
+
+        .page h1 {
+            text-align: center;
+            font-size: 40px;
+            font-weight: 900;
+            margin: 10px 0px 20px 0px;
+        }
+
+        .search {
+            width: 100%;
+            height: 50px;
+            background-color: #39393960;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .page input {
+            flex: 1;
+            font-size: 18px;
+            margin: 0px 15px;
+            outline: none;
+            border: none;
+            color: black;
+            background-color: transparent;
+        }
+
+        .page button {
+            margin: 0px 15px 0px 0px;
+            height: 30px;
+            border-radius: 8px;
+            outline: none;
+            border: none;
+            background-color: #ff7f5b;
+            color: #020202;
+            cursor: pointer;
+        }
+
+        .page button:hover {
+            background-color: #f76e48;
+            transition: all ease-in 0.1s;
+            box-shadow: 0px 0px 10px #5b5b5b60;
+        }
+
+        .result {
+            padding: 10px 20px;
+            font-family: 'SeshatRegular';
+            font-weight: normal;
+            font-style: normal;
+            color: #000;
+        }
+
+        .result h4 {
+            color: #000;
+        }
+
+        .middle {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            align-items: center;
+
+        }
+
+        .middle p {
+            margin-left: 10px;
+            color: #000;
+        }
+
+        .sourceUrls {
+            margin: 10px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sourceUrls button {
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <h1>Dictionary</h1>
+        <div class="search">
+            <input type="text" placeholder="Enter text here" id="inputItem">
+            <button onclick="finalResult()">Search</button>
+        </div>
+        <div class="result">
+            <div class="definition middle">
+                <h4>Definition</h4>
+                <p id="definition"></p>
+            </div>
+            <div class="partOfSpeech middle">
+                <h4>Part of Speech</h4>
+                <p id="partOfSpeech"></p>
+            </div>
+            <div class="example middle">
+                <h4>Example</h4>
+                <p id="example"></p>
+            </div>
+            <div class="synonyms middle">
+                <h4>Synonyms</h4>
+                <p id="synonyms"></p>
+            </div>
+            <div class="sourceUrls">
+                <a href="#" id="readMoreLink" target="_blank">
+                    <button>Seach more</button>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        let DictionaryAPI = "https://api.dictionaryapi.dev/api/v2/entries/en/";
+        let inputItem = document.getElementById("inputItem");
+
+        async function finalResult() {
+            try {
+                let response = await fetch(DictionaryAPI + inputItem.value);
+                var data = await response.json();
+
+                console.log(data);
+
+                let definition = data[0]?.meanings[0]?.definitions[0]?.definition || "Not available";
+                let partOfSpeech = data[0]?.meanings[0]?.partOfSpeech || "Not available";
+                let example = data[0]?.meanings[0]?.definitions[0]?.example || "Not available";
+                let synonyms = data[0]?.meanings[0]?.definitions[0]?.synonyms || "Not available";
+
+                document.getElementById("definition").innerHTML = definition;
+                document.getElementById("partOfSpeech").innerHTML = partOfSpeech;
+                document.getElementById("example").innerHTML = example;
+                document.getElementById("synonyms").innerHTML = synonyms;
+
+                let readMoreLink = document.getElementById("readMoreLink");
+
+                if (data.length > 0) {
+                    let moreDetailsUrl = data[0]?.sourceUrls?.moreDetailsUrl;
+
+                    if (moreDetailsUrl) {
+                        readMoreLink.href = moreDetailsUrl;
+                        readMoreLink.style.display = "inline-block";
+                    } else {
+                        readMoreLink.style.display = "none";
+                    }
+                } else {
+                    readMoreLink.style.display = "none";
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+    </script>
+</body>
+
+</html>
